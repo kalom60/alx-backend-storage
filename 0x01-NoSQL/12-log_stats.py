@@ -13,8 +13,8 @@ def log():
     print('Methods:')
     reqs = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
     for req in reqs:
-        print(f'\tmethod {req}: {nginx.count_documents({"method": req})}')
-    print(f'{nginx.count_documents({"path": "/status"})} status check')
+        print("\tmethod {}: {}".format(req, nginx.count_documents({"method": req})))
+    print("{} status check".format(nginx.count_documents({"path": "/status"})))
 
 
 if __name__ == "__main__":
