@@ -1,21 +1,28 @@
 #!/usr/bin/env python3
 """Log stat"""
-
-
 from pymongo import MongoClient
 
 
-def log():
-    client = MongoClient('mongodb://127.0.0.1:27017')
-    nginx = client.logs.nginx
-
+def logs(nginx):
+    '''
+    Prints Nginx request logs.
+    '''
     print(f'{nginx.count_documents({})} logs')
     print('Methods:')
     reqs = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
     for req in reqs:
-        print("\tmethod {}: {}".format(req, nginx.count_documents({"method": req})))
-    print("{} status check".format(nginx.count_documents({"path": "/status"})))
+        print(f'\tmethod {req}: {nginx.count_documents({"method": req})}')
+    print(f'{nginx.count_documents({"path": "/status"})} status check')
 
 
-if __name__ == "__main__":
-    log()
+def conn():
+    '''
+    Establish a connection with MongoDB.
+    '''
+    client = MongoClient('mongodb://127.0.0.1:27017')
+    nginx = client.logs.nginx
+    logs(nginx)
+
+
+if __name__ == '__main__':
+    conn()
