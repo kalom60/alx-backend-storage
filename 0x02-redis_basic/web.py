@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Implementing an expiring web cache and tracker"""
 import redis
 import requests
 from typing import Callable
@@ -6,7 +7,7 @@ from functools import wraps
 
 
 def access(method: Callable) -> Callable:
-    """Implementing an expiring web cache and tracker"""
+    """decorator for get_page"""
     @wraps(method)
     def count(url: str) -> str:
         """track how many times a particular URL was accessed"""
@@ -25,10 +26,3 @@ def access(method: Callable) -> Callable:
 def get_page(url: str) -> str:
     """send request to url"""
     return requests.get(url).text
-
-
-get_page('http://slowwly.robertomurray.co.uk')
-get_page('http://slowwly.robertomurray.co.uk')
-get_page('http://slowwly.robertomurray.co.uk')
-get_page('http://slowwly.robertomurray.co.uk')
-get_page('http://slowwly.robertomurray.co.uk')
