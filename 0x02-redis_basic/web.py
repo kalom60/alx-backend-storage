@@ -10,13 +10,14 @@ def access(method: Callable) -> Callable:
     @wraps(method)
     def count(url: str) -> str:
         """"""
-        redis_client = radis.Redis()
+        redis_client = redis.Redis()
         if redis_client.get(f'count:{url}'):
             redis_client.incr(f'count:{url}')
             print(redis_client.get(f'count:{url}'))
         else:
             redis_client.setex(f'count:{url}', 10, 1)
-    return count()
+            print(redis_client.get(f'count:{url}'))
+    return count
 
 
 @access
