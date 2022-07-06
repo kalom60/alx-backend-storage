@@ -22,6 +22,28 @@ def count_calls(method: Callable) -> Callable:
     return inc
 
 
+def call_history(method: Callable) -> Callable:
+    """
+    store the history of inputs and outputs
+    for a particular function
+    """
+    @wraps(method)
+    def history(self, *args):
+        """
+        append the input arguments,
+        and append the output too
+        """
+        inp_key = f'{method.__qualname__}:inputs'
+        out_key = f'{method.__qualname__}:outputs'
+        if isinstance(self._redis, redis.Redis):
+            self._redis.rpush(inp_key, str(args))
+        stored = method(self, *args)
+        if isinstance(self._redis, redis.Redis):
+            self._redis.rpush(out_key, stored)
+        return stored
+    return history
+
+
 class Cache:
     """Cache class"""
     def __init__(self) -> None:
@@ -30,6 +52,7 @@ class Cache:
         self._redis.flushdb(True)
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """write string data with random key"""
         key = str(uuid4())
