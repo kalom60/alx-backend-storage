@@ -14,10 +14,10 @@ def access(method: Callable) -> Callable:
         redis_client = redis.Redis()
         if redis_client.get(f'count:{url}'):
             redis_client.incr(f'count:{url}')
-            print(redis_client.get(f'count:{url}'))
-        else:
-            redis_client.setex(f'count:{url}', 10, 1)
-            print(redis_client.get(f'count:{url}'))
+            return (redis_client.get(f'count:{url}')).decode('utf8')
+        method(url)
+        redis_client.setex(f'count:{url}', 10, 1)
+        return (redis_client.get(f'count:{url}')).decode('utf8')
     return count
 
 
