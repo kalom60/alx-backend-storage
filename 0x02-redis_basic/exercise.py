@@ -44,6 +44,23 @@ def call_history(method: Callable) -> Callable:
     return history
 
 
+def replay(func):
+    """"""
+    redis_client = redis.Redis()
+    if func is None or not isinstance(redis_client, redis.Redis):
+        return
+    func_count = 0
+    inp_key = f'{func.__qualname__}:inputs'
+    out_key = f'{func.__qualname__}:outputs'
+    if redis_client.exists(func.__qualname__):
+        func_count = int(redis_client.get(func.__qualname__))
+    print(f'{func.__qualname__} was called {func_count} times:')
+    inputs = redis_client.lrange(inp_key, 0, -1)
+    outputs = redis_client.lrange(out_key, 0, -1)
+    for inp, out in zip(inputs, outputs):
+        print(f'{func.__qualname__}(*({inp.decode("utf-8")})) -> {out}')
+
+
 class Cache:
     """Cache class"""
     def __init__(self) -> None:
@@ -67,10 +84,10 @@ class Cache:
         data = self._redis.get(key)
         return fn(data) if fn is not None else data
 
-    def get_str(self, key: str) -> str:
+    def get_str(self, key):
         """get string value from redis"""
-        return self.get(key, lambda x: x.decode('utf-8'))
+        return self.get(key, str)
 
-    def get_int(self, key: str) -> int:
+    def get_int(self, key):
         """get int value from redis"""
-        return self.get(key, lambda x: int(x))
+        return self.get(key, int)
