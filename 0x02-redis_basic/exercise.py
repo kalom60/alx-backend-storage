@@ -61,7 +61,11 @@ def replay(func):
     inputs = redis_client.lrange(inp_key, 0, -1)
     outputs = redis_client.lrange(out_key, 0, -1)
     for inp, out in zip(inputs, outputs):
-        print(f'{func.__qualname__}(*({inp.decode("utf-8")})) -> {out}')
+        print('{}(*{}) -> {}'.format(
+                func.__qualname__,
+                inp.decode("utf-8"),
+                out.decode("utf-8")
+        ))
 
 
 class Cache:
