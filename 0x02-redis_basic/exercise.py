@@ -45,7 +45,10 @@ def call_history(method: Callable) -> Callable:
 
 
 def replay(func):
-    """"""
+    """
+    function to display the history
+    of calls of a particular function
+    """
     redis_client = redis.Redis()
     if func is None or not isinstance(redis_client, redis.Redis):
         return
