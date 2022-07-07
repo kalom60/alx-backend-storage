@@ -26,3 +26,7 @@ def access(method: Callable) -> Callable:
 def get_page(url: str) -> str:
     """send request to url"""
     return requests.get(url).text
+
+
+if __name__ == '__main__':
+    get_page('http://google.com')
